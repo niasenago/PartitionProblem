@@ -49,7 +49,7 @@ int bestSubsetLenght;
 // subset: array to store the subset
 // j: current size of subset
 // target: target sum of subset;
-//function find all possible subsets
+//function finds all possible subsets
 void checkAllSubsets(int arr[], int i, int n,int subset[], int j, int target){    
     if(i == n){
         int idx = 0;
@@ -57,7 +57,6 @@ void checkAllSubsets(int arr[], int i, int n,int subset[], int j, int target){
         int difference = 0;
         while(idx < j){
             sum +=subset[idx];
-            //printf("%d ",subset[idx] );
             ++idx;
         }
         difference = abs(target - sum);
@@ -67,7 +66,6 @@ void checkAllSubsets(int arr[], int i, int n,int subset[], int j, int target){
                 bestSubset[i] = subset[i];
             bestSubsetLenght = idx;
         }
-        //printf("\n");
   
         return;
     }
@@ -83,10 +81,10 @@ void checkAllSubsets(int arr[], int i, int n,int subset[], int j, int target){
         
 }
 
-bool * devideSubset(int arr[], int n, int target, bool isInSubset1[]){
-    
-    int subset[CAPACITY];
-    checkAllSubsets(arr, 0, n, subset, 0, target);
+void devideSubset(int arr[], int n, int target, int subset1[], int subset2[], int *subset1size, int *subset2size){
+    bool isInSubset1[n];
+    int tempSubset[CAPACITY];
+    checkAllSubsets(arr, 0, n, tempSubset, 0, target);
     for(int i = 0; i < n ; ++i){
         isInSubset1[i] = false;
     
@@ -97,17 +95,25 @@ bool * devideSubset(int arr[], int n, int target, bool isInSubset1[]){
             }
         }        
     }
+    for(int i = 0; i < n; ++i){
+        if(isInSubset1[i]){
+            subset1[(*subset1size)] = arr[i];
+            ++(*subset1size);
+        }else{
+            subset2[(*subset2size)] = arr[i];
+            ++(*subset2size);
+        }
+    }
 
-
-    return isInSubset1;
+    
 }
 
 int main(){
     int nums[CAPACITY];
     int subset1[CAPACITY], subset2[CAPACITY];
-    int nSubset1 = 0, nSubset2 = 0; // number of elements in subsets
     int n;
-    bool isInSubset1[CAPACITY];
+    int subset1lenght = 0, subset2lenght = 0;
+
 
     int sum = getData("input.txt", nums, &n);
     int targetValue = sum / 2; 
@@ -115,17 +121,11 @@ int main(){
     displayArray(nums, n);
     printf("sum is %d target is : %d\n", sum, targetValue);
     
-    //qsort(nums,n, sizeof(int), cmp);
-    int subset2lenght = 0;
-    int subset1lenght = 0;
-    isInSubset1[0] = devideSubset(nums, n, targetValue, isInSubset1);
-
-
-   
+    devideSubset(nums, n, targetValue, subset1,subset2, &subset1lenght, &subset2lenght);
 
     printf("subsets with minimum sum difference are: \n");
-    displayArray(bestSubset, bestSubsetLenght);
-   // displayArray(subset2, subset2lenght);
+    displayArray(subset1, subset1lenght);
+    displayArray(subset2, subset2lenght);
 
     return 0;
 }
