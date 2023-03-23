@@ -6,7 +6,11 @@
 #define CAPACITY 100
 
 //function reads integers untill the end of file
-int getData(char fileName [], int numArray[], int *n){ // side effect returns weight sum and n of elements
+//function as a side effect returns weight sum and n of elements
+//filename:
+//numArray: array to store integers
+//n: number of integers
+int getData(char fileName [], int numArray[], int *n){ 
     FILE *inputFile = fopen(fileName, "r");
 
     if(inputFile == NULL){
@@ -24,13 +28,13 @@ int getData(char fileName [], int numArray[], int *n){ // side effect returns we
         printf("In %s too many numbers", fileName);
     }      
      
-    
     fclose(inputFile);
     return weightSum;
 }
 
-
-    
+//function prints to the stdout integers from the array
+//array: array with integers
+//n: number of integers
 void displayArray(int array[], int n){
     for(int i = 0; i < n; ++i)
         printf("%d ", array[i]);
@@ -39,7 +43,7 @@ void displayArray(int array[], int n){
 
 
 int minDifference = INT_MAX;
-int bestSubset[CAPACITY];
+int bestSubset[CAPACITY]; // the most suitable subset at the moment
 int bestSubsetLenght;
 
 // arr: input array
@@ -58,6 +62,7 @@ void checkAllSubsets(int arr[], int i, int n,int subset[], int j, int target){
             sum +=subset[idx];
             ++idx;
         }
+        
         difference = abs(target - sum);
         if(difference < minDifference){
             minDifference = difference;
@@ -65,35 +70,34 @@ void checkAllSubsets(int arr[], int i, int n,int subset[], int j, int target){
                 bestSubset[i] = subset[i];
             bestSubsetLenght = idx;
         }
-  
         return;
     }
     
     // case 1: i is not included in the subset
-    // in this case simply increment i and move ahead
     checkAllSubsets(arr, i + 1, n, subset, j,target);
+
     // case 2: i is included in the subset
-    // insert arr[i] at the end of subset
-    // increment i and j
     subset[j] = arr[i];
     checkAllSubsets(arr, i + 1, n, subset, j + 1, target);
-        
 }
 
 void devideSubset(int arr[], int n, int target, int subset1[], int subset2[], int *subset1size, int *subset2size){
+    
     bool isInSubset1[n];
     int tempSubset[CAPACITY];
     checkAllSubsets(arr, 0, n, tempSubset, 0, target);
-    for(int i = 0; i < n ; ++i){
-        isInSubset1[i] = false;
+    for(int i = 0; i < n ; ++i)
+        isInSubset1[i] = 0;
+
+    for(int i = 0; i < bestSubsetLenght; ++i){
+        for(int j = 0; j < n; ++j){
+            if((isInSubset1[j] == false) && (arr[j] == bestSubset[i]) ){ // &&(isInSubset1[j] == false)
+                isInSubset1[j] = true;
+                break;
+            } 
+        }
+    }        
     
-        for(int i = 0; i < bestSubsetLenght; ++i){
-            for(int j = 0; j < n; ++j){
-                if(arr[j] == bestSubset[i])
-                    isInSubset1[j] = true;
-            }
-        }        
-    }
     for(int i = 0; i < n; ++i){
         if(isInSubset1[i]){
             subset1[(*subset1size)] = arr[i];
@@ -103,6 +107,4 @@ void devideSubset(int arr[], int n, int target, int subset1[], int subset2[], in
             ++(*subset2size);
         }
     }
-
-    
 }
