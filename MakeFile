@@ -1,10 +1,10 @@
-TARGET = test
+TARGET = partitionTest
 
-$(TARGET) : test.o function.o 
-	gcc test.o function.o -o $(TARGET) 
+$(TARGET) : test.o functions.o 
+	gcc test.o functions.o -o $(TARGET) 
 
 test.o : test.c
 	gcc -c test.c -o test.o
 
-function.o: function.c
-	gcc -c function.c -o function.o
+functions.o: functions.c
+	gcc -c functions.c -o functions.o
